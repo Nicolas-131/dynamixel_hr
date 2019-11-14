@@ -147,7 +147,7 @@ chain.goto(id,100,speed=0) # Full speed back to pos 100
             toeval=self.textTask.get(1.0,END)
             self.evaluator.perform(toeval)
         except Exception as e:
-            tkMessageBox.showerror("Python Error",str(e))
+            tkinter.messagebox.showerror("Python Error",str(e))
             
         
         
@@ -155,7 +155,7 @@ chain.goto(id,100,speed=0) # Full speed back to pos 100
         options={}
         options['defaultextension'] = '.py'
         options['filetypes'] = [('Python script', '.py'),('all files', '.*')]
-        file=tkFileDialog.asksaveasfilename(**options)
+        file=tkinter.filedialog.asksaveasfilename(**options)
         if file:
             txt=self.textTask.get(1.0,END)
             f=open(file,"w")
@@ -166,7 +166,7 @@ chain.goto(id,100,speed=0) # Full speed back to pos 100
         options={}
         options['defaultextension'] = '.py'
         options['filetypes'] = [('Python script', '.py'),('all files', '.*')]
-        file=tkFileDialog.askopenfilename(**options)
+        file=tkinter.filedialog.askopenfilename(**options)
         if file:
             self.textTask.delete(1.0,END)
             f=open(file,"r")
@@ -428,19 +428,19 @@ class MainWindow:
     def changeMotorID(self):
         oldid=self.getSelectedMotor()
         if oldid<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
-            newid=tkSimpleDialog.askinteger("Change ID","Please provide new ID for motor %d"%oldid)
+            newid=tkinter.simpledialog.askinteger("Change ID","Please provide new ID for motor %d"%oldid)
             if newid==None:
                 return
             if oldid==newid:
                 return
             if newid<1 or newid>Dxl.BROADCAST:
-                tkMessageBox.showerror("Range Error","ID should be between 1 and %d"%(Dxl.BROADCAST-1))
+                tkinter.messagebox.showerror("Range Error","ID should be between 1 and %d"%(Dxl.BROADCAST-1))
             else:
                 do=True
                 if newid in self.chain.motors.keys():
-                    answer=tkMessageBox.askyesno("ID Conflict","Warning: the motor ID %d is already attributed on your chain, are you sure you want to proceed?"%(newid))
+                    answer=tkinter.messagebox.askyesno("ID Conflict","Warning: the motor ID %d is already attributed on your chain, are you sure you want to proceed?"%(newid))
                     if not answer:
                         do=False
                 if do:
@@ -450,27 +450,27 @@ class MainWindow:
     def disableMotor(self):
         id=self.getSelectedMotor()
         if id<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
             self.chain.disable(id)
 
     def enableMotor(self):
         id=self.getSelectedMotor()
         if id<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
             self.chain.enable(id)
 
     def factoryReset(self):
         id=self.getSelectedMotor()
         if id<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
-            answer=tkMessageBox.askyesno("Factory Reset","Warning: you are about to completely reset motor ID %d, its ID and baudrate will be changed, are you sure you want to proceed?"%(id))
+            answer=tkinter.messagebox.askyesno("Factory Reset","Warning: you are about to completely reset motor ID %d, its ID and baudrate will be changed, are you sure you want to proceed?"%(id))
             if not answer: return
             do=True
             if 1 in self.chain.motors.keys():
-                answer=tkMessageBox.askyesno("ID Conflict","Warning: the motor ID 1 obtained after factory reset is already attributed on your chain, are you sure you want to proceed?")
+                answer=tkinter.messagebox.askyesno("ID Conflict","Warning: the motor ID 1 obtained after factory reset is already attributed on your chain, are you sure you want to proceed?")
                 if not answer:
                     do=False
             if do:
@@ -480,16 +480,16 @@ class MainWindow:
     def changeMotorBaudrate(self):
         id=self.getSelectedMotor()
         if id<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
-            rate=tkSimpleDialog.askinteger("Change Baudrate","Please provide the new baudrate for motor ID %d"%id)
+            rate=tkinter.simpledialog.askinteger("Change Baudrate","Please provide the new baudrate for motor ID %d"%id)
             if rate==None:
                 return
             reg=self.chain.motors[id].registers["baud_rate"]
             dxlrate=reg.fromsi(rate)
             realrate=reg.tosi(dxlrate)
             
-            answer=tkMessageBox.askyesno("Change Baudrate","Warning: motor ID %d will be set to baudrate %d, are you sure you want to proceed?"%(id,realrate))
+            answer=tkinter.messagebox.askyesno("Change Baudrate","Warning: motor ID %d will be set to baudrate %d, are you sure you want to proceed?"%(id,realrate))
             if answer:
                 self.chain.set_reg(id,"baud_rate",dxlrate)                
                 self.connect()
@@ -497,7 +497,7 @@ class MainWindow:
     def openDocumentation(self):
         id=self.getSelectedMotor()
         if id<0:
-            tkMessageBox.showerror("Selection Error","Please select a motor first")
+            tkinter.messagebox.showerror("Selection Error","Please select a motor first")
         else:
             import webbrowser
             url=self.chain.motors[id].documentation_url
@@ -506,14 +506,14 @@ class MainWindow:
         
     def createMotorsWindow(self):
         if not self.chain:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
             return
         if self.motorsWindow==None:
             self.motorsWindow=MotorsWindow(self.master,self)
 
     def createPythonWindow(self):
         if not self.chain:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
             return
         if self.pythonWindow==None:
             self.pythonWindow=PythonWindow(self.master,self)
@@ -570,7 +570,7 @@ class MainWindow:
             try:
                 self.open(rate)
             except SerialException as e:
-                tkMessageBox.showerror("Serial Error","Could not open serial port: \n"+str(e))
+                tkinter.messagebox.showerror("Serial Error","Could not open serial port: \n"+str(e))
                 return
                 
             try:
@@ -585,10 +585,10 @@ class MainWindow:
                     selected_rate=rate
                 #~ chain.dump()
             except dxlcore.DxlConfigurationException as e:
-                tkMessageBox.showerror("Configuration Error","Could not instantiate motor: \n"+str(e))
+                tkinter.messagebox.showerror("Configuration Error","Could not instantiate motor: \n"+str(e))
                 return
             except dxlcore.DxlCommunicationException as e:
-                tkMessageBox.showerror("Communication Error","Could not communicate with motor (could be due to overlapping IDs, try on single motors): \n"+str(e))
+                tkinter.messagebox.showerror("Communication Error","Could not communicate with motor (could be due to overlapping IDs, try on single motors): \n"+str(e))
                 return
             finally:
                 self.close()
@@ -606,23 +606,23 @@ class MainWindow:
             try:
                 self.conf=json.loads(txt)
             except Exception as e:
-                tkMessageBox.showerror("JSON Error","Could not parse JSON formatted configuration: \n"+str(e))
+                tkinter.messagebox.showerror("JSON Error","Could not parse JSON formatted configuration: \n"+str(e))
                 return
                 
             try:
                 self.chain.set_configuration(self.conf)
             except Exception as e:
-                tkMessageBox.showerror("Configuration Error","Could not set Dynamixel configuration: \n"+str(e))
+                tkinter.messagebox.showerror("Configuration Error","Could not set Dynamixel configuration: \n"+str(e))
                 return
         else:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
 
     def refresh(self):
         if self.chain:
             self.conf=self.chain.get_configuration(broadcast=self.doBroadcast.get())
             self.showConfig(self.conf)
         else:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
 
 
     def selectRate(self,rate,populateList=False):
@@ -633,14 +633,14 @@ class MainWindow:
         try:
             self.open(rate)
         except SerialException as e:
-            tkMessageBox.showerror("Serial Error","Could not open serial port: \n"+str(e))
+            tkinter.messagebox.showerror("Serial Error","Could not open serial port: \n"+str(e))
             return
         try:            
             self.conf=self.chain.get_configuration(broadcast=self.doBroadcast.get())            
         except dxlcore.DxlConfigurationException as e:            
-            tkMessageBox.showerror("Configuration Error","Could not instantiate motor: \n"+str(e))
+            tkinter.messagebox.showerror("Configuration Error","Could not instantiate motor: \n"+str(e))
         except dxlcore.DxlCommunicationException as e:
-            tkMessageBox.showerror("Communication Error","Could not communicate with motor (could be due to overlapping IDs, try on single motors): \n"+str(e))
+            tkinter.messagebox.showerror("Communication Error","Could not communicate with motor (could be due to overlapping IDs, try on single motors): \n"+str(e))
             return
         
         if populateList:
@@ -659,7 +659,7 @@ class MainWindow:
     
     def set_chain_reg(self,reg,value):
         if not self.chain:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
             return
         for id in self.chain.motors.keys():
             self.chain.set_reg(id,reg,value)
@@ -672,23 +672,23 @@ class MainWindow:
     
     def savePose(self):
         if not self.chain:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
             return
         options={}
         options['defaultextension'] = '.position'
         options['filetypes'] = [('pose files', '.position'),('all files', '.*')]
-        file=tkFileDialog.asksaveasfilename(**options)
+        file=tkinter.filedialog.asksaveasfilename(**options)
         if file:                        
             self.chain.save_position(file)
 
     def loadPose(self):
         if not self.chain:
-            tkMessageBox.showerror("Chain Error","Please connect to a valid chain first")
+            tkinter.messagebox.showerror("Chain Error","Please connect to a valid chain first")
             return
         options={}
         options['defaultextension'] = '.position'
         options['filetypes'] = [('pose files', '.position'),('all files', '.*')]
-        file=tkFileDialog.askopenfilename(**options)
+        file=tkinter.filedialog.askopenfilename(**options)
         if file:
             self.chain.load_position(file)
 
