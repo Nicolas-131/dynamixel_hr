@@ -35,13 +35,15 @@ def get_model_name(model_number):
 
 class ModelRegisteringMetaclass(type):
     def __new__(cls, name, bases, attrs):
+        logging.info("class ModelRegisteringMetaclass(type):")
         inst=type.__new__(cls, name,bases,attrs)        
-        DxlElement.registerModel(inst.model_number,inst)        
+        DxlElement.registerModel(inst.model_number,inst)  
+        logging.info("INST : " + str(inst))      
         return inst
         
 
 
-class DxlElement(object):
+class DxlElement():
     DxlModels={}
     
     def __init__(self):
@@ -56,6 +58,7 @@ class DxlElement(object):
 
     @classmethod
     def instantiateMotor(cls,id,model_number):
+        logging.info("ELEMENTS : " + str(cls.DxlModels))
         if not model_number in cls.DxlModels.keys():
             raise DxlConfigurationException("Cannot instantiate non registered element model %d on ID %d"%(model_number,id))
         mcls=cls.DxlModels[model_number]
@@ -83,7 +86,7 @@ class DxlElement(object):
         return (0,[Dxl.CMD_WRITE_DATA,r.address]+value )
 
     def sort(self):
-        self.registers = OrderedDict( sorted(self.registers.iteritems(), key=lambda x: x[1].address) )
+        self.registers = OrderedDict( sorted(self.registers.items(), key=lambda x: x[1].address) )
         
     def baud_to_si(self,val):
         return int(2000000/(val+1))

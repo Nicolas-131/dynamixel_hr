@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 # Dynamixel library for MX28 and MX64
 
@@ -18,8 +19,6 @@ import json
 import array
 from collections import OrderedDict
 from dxl.post_threading import Post
-
-
     
         
         
@@ -88,9 +87,14 @@ class DxlChain:
             
     def _send(self, id, packet):
         """ Takes a payload, packages it as [header,id,length,payload,checksum], sends it on serial and flush"""
+        # logging.info("id : " + str(id))
+        # logging.info("packet : " + str(packet))
+        # logging.info("len(packet) : " + str(len(packet)))
         checksumed_data = [id, len(packet)+1] + packet
-        
-        data="".join(map(chr, [0xFF, 0xFF] + checksumed_data + [self.checksum(checksumed_data)]))
+        # logging.info("checksumed_data : " + str(checksumed_data))
+        #data="".join(map(chr, [0xFF, 0xFF] + checksumed_data + [self.checksum(checksumed_data)]))
+        data = bytes([0xFF, 0xFF] + checksumed_data + [self.checksum(checksumed_data)])
+        # logging.info("DATA : " + str(data))
         self.port.write(data)
         self.port.flushOutput()
 
@@ -196,6 +200,7 @@ class DxlChain:
     def _get_model(self,id):
         """Obtain the model number of a motor"""
         data=self._read(id,0,2)
+        logging.info("DATA : " + str(data))
         return (data[1]<<8)+data[0]
 
         

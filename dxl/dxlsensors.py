@@ -16,8 +16,8 @@ class DxlSensor(DxlElement):
         return False
     
 
-class DxlSensorAXS1(DxlSensor):
-    __metaclass__=ModelRegisteringMetaclass
+class DxlSensorAXS1(DxlSensor,metaclass=ModelRegisteringMetaclass):
+    #__metaclass__=ModelRegisteringMetaclass
     model_name="AXS1"
     model_number=13
     documentation_url="http://support.robotis.com/en/product/auxdevice/sensor/dxl_ax_s1.htm"
